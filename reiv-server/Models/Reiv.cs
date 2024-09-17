@@ -2,10 +2,10 @@
 
 namespace reiv_server.Models
 {
-    public class Post {
+    public class Reiv {
 
-        public Post() { }
-        public Post(CreatePostDto dto) {
+        public Reiv() { }
+        public Reiv(CreateReivDto dto) {
             this.Content = dto.Content;
             this.CreatorId = dto.CreatorId;
         }

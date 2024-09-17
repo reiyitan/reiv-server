@@ -2,6 +2,6 @@
     public class User {
         public int Id { get; set; } 
         public string? Username { get; set; }
-        public ICollection<Post> Posts { get; set; } = new List<Post>(); 
+        public ICollection<Reiv> Reivs { get; set; } = new List<Reiv>(); 
     }
 }
