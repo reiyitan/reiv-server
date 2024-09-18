@@ -39,7 +39,7 @@ namespace reiv_server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReiv(int id) {
+        public async Task<ActionResult> DeleteReiv(int id) {
             Reiv? reiv = await _context.Reivs.FindAsync(id);
             if (reiv == null) {
                 return NotFound(); 
