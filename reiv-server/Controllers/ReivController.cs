@@ -17,7 +17,8 @@ namespace reiv_server.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reiv>>> GetReivs() {
-            return await _context.Reivs.ToListAsync();
+            List<Reiv> reivs = await _context.Reivs.ToListAsync();
+            return Ok(reivs);
         }
 
         [HttpGet("{id}")]
@@ -26,16 +27,26 @@ namespace reiv_server.Controllers
             if (reiv == null) {
                 return NotFound();
             }
-            return reiv;
+            return Ok(reiv);
         }
 
         [HttpPost]
         public async Task<ActionResult<Reiv>> PostReiv(CreateReivDto dto) {
-            Reiv reiv = new Reiv(dto); 
+            Reiv reiv = new Reiv(dto);
             _context.Reivs.Add(reiv);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetReiv), new { id = reiv.Id }, reiv);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteReiv(int id) {
+            Reiv? reiv = await _context.Reivs.FindAsync(id);
+            if (reiv == null) {
+                return NotFound(); 
+            }
+            _context.Reivs.Remove(reiv);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
