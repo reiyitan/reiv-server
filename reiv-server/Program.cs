@@ -1,12 +1,24 @@
 using Microsoft.EntityFrameworkCore;
-using reiv_server.Models; 
+using reiv_server.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddDbContext<ReivContext>(options => options.UseInMemoryDatabase("ReivDb"));
+builder.Services.AddAuthentication();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ReivContext>()
+    .AddDefaultTokenProviders(); 
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers();
-builder.Services.AddDbContext<ReivContext>(opt => opt.UseInMemoryDatabase("Reiv"));
+builder.Services.ConfigureApplicationCookie(options => {
+    options.Events.OnRedirectToLogin = context => {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
