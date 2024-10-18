@@ -17,6 +17,11 @@ builder.Services.ConfigureApplicationCookie(options => {
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
         return Task.CompletedTask;
     };
+
+    options.Events.OnRedirectToAccessDenied = context => {
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        return Task.CompletedTask;
+    };
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -63,12 +63,44 @@ namespace reiv_server.Controllers
         }
 
         [Authorize]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<ReivDto>> PatchReiv(int id, UpdateReivDto dto) {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Reiv reiv = await _context.Reivs.Include(reiv => reiv.Creator).FirstOrDefaultAsync(reiv => reiv.Id == id);
+            if (reiv == null) {
+                return NotFound();
+            }
+
+            if (userId == null || userId != reiv.CreatorId) {
+                return Forbid();
+            }
+
+            if (dto.NewTitle != null) {
+                reiv.Title = dto.NewTitle;
+            }
+
+            if (dto.NewContent != null) {
+                reiv.Content = dto.NewContent;
+            }
+
+            await _context.SaveChangesAsync();
+            ReivDto reivDto = new ReivDto(reiv.Title, reiv.Content, new ReivCreatorDto(reiv.CreatorId, reiv.Creator.UserName));
+            return Ok(reivDto); 
+        }
+
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteReiv(int id) {
-            Reiv? reiv = await _context.Reivs.FindAsync(id);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+            Reiv reiv = await _context.Reivs.FindAsync(id);
             if (reiv == null) {
                 return NotFound(); 
             }
+
+            if (userId == null || userId != reiv.CreatorId) {
+                return Forbid(); 
+            }
+
             _context.Reivs.Remove(reiv);
             await _context.SaveChangesAsync();
             return NoContent();
